@@ -1,0 +1,36 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+**/node_modules
+package-lock.json
+yarn.lock
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+backend/.env
+
+# Go
+backend/main
+backend/main.exe
+backend/go.sum
+
+# System
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml

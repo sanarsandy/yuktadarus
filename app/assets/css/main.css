@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream-100 text-emerald-900 font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .card-neu {
+    @apply bg-cream-100 rounded-3xl p-6 transition-all duration-300;
+    box-shadow: 8px 8px 16px #E6E1D6, -8px -8px 16px #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .card-neu-sm {
+    @apply bg-cream-100 rounded-2xl p-4 transition-all duration-300;
+    box-shadow: 4px 4px 8px #E6E1D6, -4px -4px 8px #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .card-neu-inset {
+    @apply bg-cream-100 rounded-2xl p-4;
+    box-shadow: inset 4px 4px 8px #E6E1D6, inset -4px -4px 8px #ffffff;
+  }
+
+  .card-neu-pressed {
+    @apply bg-cream-100 rounded-2xl;
+    box-shadow: inset 6px 6px 12px #E6E1D6, inset -6px -6px 12px #ffffff;
+  }
+
+  .btn-primary {
+    @apply bg-emerald-500 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 ease-out hover:bg-emerald-600 active:scale-95 flex items-center justify-center;
+    box-shadow: 5px 5px 10px #E6E1D6, -5px -5px 10px #ffffff;
+  }
+
+  .btn-primary:active {
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-secondary {
+    @apply bg-cream-200 text-emerald-700 font-medium py-3 px-6 rounded-2xl transition-all duration-300 ease-out hover:bg-cream-300 active:scale-95 flex items-center justify-center;
+    box-shadow: 4px 4px 8px #E6E1D6, -4px -4px 8px #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .nav-glass {
+    background: rgba(249, 247, 242, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .text-arabic {
+    @apply font-arabic text-2xl leading-loose;
+    direction: rtl;
+  }
+}
+
+@layer utilities {
+  .text-gradient-emerald {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #2D5A43 0%, #478767 100%);
+  }
+}
+
+/* Page transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}

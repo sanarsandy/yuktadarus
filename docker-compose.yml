@@ -1,0 +1,54 @@
+services:
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+      - "24678:24678"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+      - /app/.nuxt
+    environment:
+      - NODE_ENV=development
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3000
+      - NITRO_HOST=0.0.0.0
+      - NITRO_PORT=3000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - DB_USER=odoj_user
+      - DB_PASSWORD=odoj_password
+      - DB_NAME=odoj_db
+      - DB_PORT=5432
+      - JWT_SECRET=supersecretkey
+      - PORT=8080
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=odoj_user
+      - POSTGRES_PASSWORD=odoj_password
+      - POSTGRES_DB=odoj_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
