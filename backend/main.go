@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"odoj-backend/controllers"
-	"odoj-backend/middleware"
-	"odoj-backend/models"
+	"macaquran-backend/controllers"
+	"macaquran-backend/middleware"
+	"macaquran-backend/models"
 	"os"
 
 	"github.com/gin-contrib/cors"

@@ -1,4 +1,4 @@
-module odoj-backend
+module macaquran-backend
 
 go 1.21
 

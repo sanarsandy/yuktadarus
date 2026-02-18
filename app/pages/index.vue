@@ -14,7 +14,7 @@
 
       <!-- Title -->
       <h1 class="text-4xl font-extrabold text-emerald-800 mb-6">
-        One Day One Juz
+        MacaQuran
       </h1>
 
       <!-- Description -->

@@ -3,8 +3,8 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"odoj-backend/models"
-	"odoj-backend/utils"
+	"macaquran-backend/models"
+	"macaquran-backend/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"

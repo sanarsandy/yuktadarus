@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"odoj-backend/models"
+	"macaquran-backend/models"
 	"strconv"
 	"time"
 

@@ -37,7 +37,7 @@ const copied = ref(false)
 
 async function copyLink() {
   try {
-    await navigator.clipboard.writeText(`Join me on ODOJ! Use my code to start your Quran journey.`)
+    await navigator.clipboard.writeText(`Join me on MacaQuran! Use my code to start your Quran journey.`)
     copied.value = true
     setTimeout(() => { copied.value = false }, 2000)
   } catch {
