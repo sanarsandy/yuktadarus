@@ -98,3 +98,19 @@ html {
   width: 0;
   background: transparent;
 }
+
+/* ═══════════ TAJWEED COLORS ═══════════ */
+.tj-hamzah { color: #4a5568; }              /* Hamzah Wasl — gray */
+.tj-lam { color: #0d9488; }                 /* Lam Shamsiyyah — teal */
+.tj-madd-normal { color: #e67e22; }         /* Madd (2 harakat) — orange */
+.tj-madd-permissible { color: #8b5cf6; }    /* Madd permissible — purple */
+.tj-madd-obligatory { color: #dc2626; }     /* Madd laazim — red */
+.tj-silent { color: #9ca3af; }              /* Silent letters — light gray */
+.tj-qalqalah { color: #2563eb; }            /* Qalqalah — blue */
+.tj-ikhfa-noon { color: #16a34a; }          /* Ikhfa (noon) — green */
+.tj-ghunnah { color: #15803d; }             /* Ghunnah — dark green */
+.tj-ikhfa-meem { color: #6366f1; }          /* Ikhfa Shafawi — indigo */
+.tj-ikhfa { color: #22c55e; }               /* Ikhfa — light green */
+.tj-idgham-no-ghunnah { color: #06b6d4; }   /* Idgham tanpa Ghunnah — cyan */
+.tj-idgham-ghunnah { color: #0d9488; }      /* Idgham + Ghunnah — teal */
+.tj-iqlab { color: #ec4899; }               /* Iqlab — pink */

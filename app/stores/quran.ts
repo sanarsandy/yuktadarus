@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useTilawahStore } from './tilawah'
 
 interface Ayah {
     number: number
@@ -23,6 +24,7 @@ interface Ayah {
 interface QuranState {
     currentJuz: number
     juzData: Ayah[]
+    translationData: Ayah[]
     isLoading: boolean
     error: string | null
 }
@@ -31,6 +33,7 @@ export const useQuranStore = defineStore('quran', {
     state: (): QuranState => ({
         currentJuz: 1,
         juzData: [],
+        translationData: [],
         isLoading: false,
         error: null,
     }),
@@ -46,15 +49,45 @@ export const useQuranStore = defineStore('quran', {
             this.error = null
             this.currentJuz = juzNumber
             this.juzData = []
+            this.translationData = []
 
             try {
-                const response = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/quran-uthmani`)
-                const data = await response.json()
+                const tilawahStore = useTilawahStore()
+                const prefs = tilawahStore.quranPreferences || {
+                    script: 'quran-uthmani',
+                    translation: '',
+                    fontSize: 28,
+                }
 
-                if (data.code === 200 && data.data && data.data.ayahs) {
-                    this.juzData = data.data.ayahs
+                const scriptEdition = prefs.script || 'quran-uthmani'
+                const translationEdition = prefs.translation || ''
+
+                console.log('[QuranStore] Fetching juz', juzNumber, 'script:', scriptEdition, 'translation:', translationEdition)
+
+                // Fetch Arabic script
+                const scriptRes = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/${scriptEdition}`)
+                const scriptData = await scriptRes.json()
+
+                if (scriptData.code === 200 && scriptData.data?.ayahs) {
+                    this.juzData = scriptData.data.ayahs
                 } else {
                     this.error = 'Failed to fetch Quran data'
+                    return
+                }
+
+                // Fetch Translation (separate request, juz endpoint doesn't support multi-edition)
+                if (translationEdition) {
+                    try {
+                        const transRes = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/${translationEdition}`)
+                        const transData = await transRes.json()
+
+                        if (transData.code === 200 && transData.data?.ayahs) {
+                            this.translationData = transData.data.ayahs
+                            console.log('[QuranStore] Translation loaded:', this.translationData.length, 'ayahs')
+                        }
+                    } catch (e) {
+                        console.warn('[QuranStore] Translation fetch failed, continuing without', e)
+                    }
                 }
             } catch (err: any) {
                 this.error = err.message || 'An error occurred while fetching data'
@@ -67,6 +100,4 @@ export const useQuranStore = defineStore('quran', {
             this.currentJuz = juz
         }
     },
-
-    // No persistence for Quran text to save space/bandwidth, strictly on-demand
 })

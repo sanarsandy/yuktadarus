@@ -63,9 +63,15 @@
             </div>
 
             <!-- Arabic Text -->
-            <div class="text-right font-arabic text-3xl leading-[2.5] text-emerald-900 mb-4 pt-6" dir="rtl">
-              {{ ayah.text }}
-               <span class="text-xl text-emerald-500 font-sans mx-1">۝</span>
+            <div class="text-right font-arabic leading-[2.5] text-emerald-900 pt-6" dir="rtl" :style="{ fontSize: `${tilawahStore.quranPreferences.fontSize}px` }">
+              <span v-if="isTajweed" v-html="renderAyah(ayah.text)"></span>
+              <span v-else>{{ ayah.text }}</span>
+              <span class="text-emerald-500 font-sans mx-1" :style="{ fontSize: `${Math.max(tilawahStore.quranPreferences.fontSize - 8, 14)}px` }">۝</span>
+            </div>
+
+            <!-- Translation -->
+            <div v-if="translationForAyah(ayah.number)" class="mt-3 pt-3 border-t border-cream-100 text-sm text-cream-500 leading-relaxed">
+              {{ translationForAyah(ayah.number) }}
             </div>
           </div>
         </div>
@@ -118,12 +124,26 @@
 <script setup lang="ts">
 import { useQuranStore } from '~/stores/quran'
 import { useTilawahStore } from '~/stores/tilawah'
+import { parseTajweed } from '~/composables/useTajweedParser'
 
 const route = useRoute()
 const router = useRouter()
 const quranStore = useQuranStore()
 const tilawahStore = useTilawahStore()
 const { success, info } = useToast()
+
+const isTajweed = computed(() => tilawahStore.quranPreferences.script === 'quran-tajweed')
+
+function renderAyah(text: string): string {
+    if (isTajweed.value) return parseTajweed(text)
+    return text
+}
+
+function translationForAyah(ayahNumber: number): string | null {
+    if (!quranStore.translationData.length) return null
+    const tr = quranStore.translationData.find((a: any) => a.number === ayahNumber)
+    return tr ? (tr as any).text : null
+}
 
 const currentJuz = computed(() => Number(route.params.juz))
 const isCompleted = computed(() => tilawahStore.completedJuz[currentJuz.value - 1])

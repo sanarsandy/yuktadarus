@@ -61,6 +61,64 @@
       </div>
     </div>
 
+    <!-- ═══════════ PENGATURAN MUSHAF ═══════════ -->
+    <div class="card-neu animate-fade-up" style="animation-delay: 0.08s" id="mushaf-settings-card">
+      <div class="flex items-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        <h3 class="text-sm font-bold text-emerald-800">Pengaturan Mushaf</h3>
+      </div>
+
+      <!-- Script Type -->
+      <p class="text-xs text-cream-400 mb-2">Jenis Mushaf</p>
+      <div class="space-y-2 mb-5">
+        <button
+          v-for="opt in scriptOptions" :key="opt.value"
+          @click="setScript(opt.value)"
+          class="w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-200"
+          :class="tilawah.quranPreferences.script === opt.value ? 'border-emerald-500 bg-emerald-50' : 'border-cream-200 bg-cream-100 hover:border-cream-300'"
+        >
+          <div>
+            <span class="text-sm font-semibold text-emerald-800">{{ opt.label }}</span>
+            <p class="text-xs text-cream-400">{{ opt.desc }}</p>
+          </div>
+          <div v-if="tilawah.quranPreferences.script === opt.value" class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </button>
+      </div>
+
+      <!-- Translation -->
+      <p class="text-xs text-cream-400 mb-2">Terjemahan</p>
+      <div class="flex flex-wrap gap-2 mb-5">
+        <button
+          v-for="opt in translationOptions" :key="opt.value"
+          @click="setTranslation(opt.value)"
+          class="px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all duration-200"
+          :class="tilawah.quranPreferences.translation === opt.value ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-cream-200 bg-cream-100 text-cream-500 hover:border-cream-300'"
+        >
+          {{ opt.label }}
+        </button>
+      </div>
+
+      <!-- Font Size -->
+      <p class="text-xs text-cream-400 mb-2">Ukuran Font: {{ tilawah.quranPreferences.fontSize }}px</p>
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-cream-400">A</span>
+        <input
+          type="range" min="20" max="40" step="2"
+          :value="tilawah.quranPreferences.fontSize"
+          @input="setFontSize(Number(($event.target as HTMLInputElement).value))"
+          class="flex-1 h-2 bg-cream-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        />
+        <span class="text-lg font-bold text-cream-500">A</span>
+      </div>
+      <div class="mt-3 p-3 bg-cream-200 rounded-xl text-right" dir="rtl">
+        <span class="font-arabic text-emerald-800" :style="{ fontSize: `${tilawah.quranPreferences.fontSize}px` }">
+          بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+        </span>
+      </div>
+    </div>
+
     <!-- ═══════════ BADGES ═══════════ -->
     <div class="card-neu animate-fade-up" style="animation-delay: 0.1s" id="badges-section">
       <h3 class="text-sm font-bold text-emerald-800 mb-4">Pencapaian</h3>
@@ -141,6 +199,36 @@ function resetProgress() {
     tilawah.resetProgress()
     toast('Progress direset')
   }
+}
+
+// ═══════════ MUSHAF PREFERENCES ═══════════
+import type { QuranPreferences } from '~/stores/tilawah'
+
+const scriptOptions = [
+  { value: 'quran-uthmani' as const, label: 'Uthmani', desc: 'Rasm Uthmani dengan tashkil lengkap' },
+  { value: 'quran-simple' as const, label: 'Imla\'i (Sederhana)', desc: 'Gaya penulisan modern' },
+  { value: 'quran-tajweed' as const, label: 'Tajwid Berwarna', desc: 'Uthmani dengan warna hukum tajwid' },
+]
+
+const translationOptions = [
+  { value: '' as const, label: 'Tidak Ada' },
+  { value: 'id.indonesian' as const, label: 'Kemenag RI' },
+  { value: 'id.muntakhab' as const, label: 'Quraish Shihab' },
+  { value: 'id.jalalayn' as const, label: 'Tafsir Jalalayn' },
+]
+
+function setScript(val: QuranPreferences['script']) {
+  tilawah.quranPreferences.script = val
+  toast(`Mushaf diubah`)
+}
+
+function setTranslation(val: QuranPreferences['translation']) {
+  tilawah.quranPreferences.translation = val
+  toast(val ? 'Terjemahan diaktifkan' : 'Terjemahan dinonaktifkan')
+}
+
+function setFontSize(val: number) {
+  tilawah.quranPreferences.fontSize = val
 }
 </script>
 

@@ -14,6 +14,15 @@ interface Goal {
     target: number
 }
 
+export interface QuranPreferences {
+    /** Arabic script edition */
+    script: 'quran-uthmani' | 'quran-simple' | 'quran-tajweed'
+    /** Translation edition (empty = disabled) */
+    translation: '' | 'id.indonesian' | 'id.muntakhab' | 'id.jalalayn'
+    /** Font size in pixels */
+    fontSize: number
+}
+
 interface TilawahState {
     /** Array of 30 booleans — true = juz completed */
     completedJuz: boolean[]
@@ -31,6 +40,8 @@ interface TilawahState {
     readingPositions: ReadingPosition[]
     /** User's reading goal */
     goal: Goal
+    /** Quran display preferences */
+    quranPreferences: QuranPreferences
 }
 
 export const useTilawahStore = defineStore('tilawah', {
@@ -41,6 +52,11 @@ export const useTilawahStore = defineStore('tilawah', {
         lastRead: null,
         readingPositions: [],
         goal: { type: 'free', target: 0 },
+        quranPreferences: {
+            script: 'quran-uthmani',
+            translation: '',
+            fontSize: 28,
+        },
     }),
 
     getters: {

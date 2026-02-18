@@ -34,6 +34,7 @@ export function usePrayerTimes() {
                     latitude,
                     longitude,
                     method,
+                    adjustment: -1, // Sesuaikan tanggal Hijriyah dengan keputusan Kemenag RI
                 }
             }
             )
