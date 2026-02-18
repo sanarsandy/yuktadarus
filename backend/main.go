@@ -46,6 +46,29 @@ func main() {
 			tilawah.GET("", tilawahController.GetProgress)
 			tilawah.POST("", tilawahController.ToggleJuz)
 			tilawah.PUT("/position", tilawahController.UpdatePosition)
+			tilawah.GET("/positions", tilawahController.GetReadingPositions)
+			tilawah.PUT("/goal", tilawahController.SetGoal)
+			tilawah.GET("/goal", tilawahController.GetGoal)
+		}
+
+		// Circle Routes (Protected)
+		circles := api.Group("/circles")
+		circles.Use(middleware.JwtAuthMiddleware())
+		{
+			circleController := controllers.CircleController{}
+			circles.POST("", circleController.CreateCircle)
+			circles.GET("/my", circleController.GetMyCircles)
+			circles.GET("/:id", circleController.GetCircleDetail)
+			circles.POST("/join", circleController.JoinCircle)
+			circles.DELETE("/:id/leave", circleController.LeaveCircle)
+			circles.POST("/:id/assign", circleController.AssignJuz)
+			circles.GET("/:id/leaderboard", circleController.GetLeaderboard)
+			circles.PUT("/:id/scheme", circleController.SetScheme)
+			circles.POST("/:id/auto-assign", circleController.AutoAssign)
+			circles.PUT("/:id/assign/:assignId/status", circleController.UpdateAssignmentStatus)
+			circles.GET("/:id/stats", circleController.GetCircleStats)
+			circles.GET("/:id/my-assignments", circleController.GetMyAssignments)
+			circles.POST("/:id/daily-assign", circleController.DailyAssign)
 		}
 	}
 

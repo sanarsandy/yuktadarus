@@ -1,6 +1,19 @@
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 
+interface ReadingPosition {
+    id: number
+    juz_number: number
+    ayah: number
+    surah: string
+    updated_at: string
+}
+
+interface Goal {
+    type: string  // 'free' | 'khatam_30' | 'khatam_60' | 'ayat' | 'custom'
+    target: number
+}
+
 interface TilawahState {
     /** Array of 30 booleans — true = juz completed */
     completedJuz: boolean[]
@@ -8,12 +21,16 @@ interface TilawahState {
     completionDates: (string | null)[]
     /** Consecutive days streak */
     lastCompletedDate: string | null
-    /** Last read position */
+    /** Last read position (global) */
     lastRead: {
         juz: number
         ayah: number
         surah: string
     } | null
+    /** Per-juz reading positions */
+    readingPositions: ReadingPosition[]
+    /** User's reading goal */
+    goal: Goal
 }
 
 export const useTilawahStore = defineStore('tilawah', {
@@ -22,6 +39,8 @@ export const useTilawahStore = defineStore('tilawah', {
         completionDates: Array(30).fill(null),
         lastCompletedDate: null,
         lastRead: null,
+        readingPositions: [],
+        goal: { type: 'free', target: 0 },
     }),
 
     getters: {
@@ -39,33 +58,33 @@ export const useTilawahStore = defineStore('tilawah', {
         },
 
         currentStreak(state): number {
-            if (!state.lastCompletedDate) return 0
+            const completedDays = new Set<string>()
+            state.completionDates.forEach(d => {
+                if (d) {
+                    const date = new Date(d)
+                    date.setHours(0, 0, 0, 0)
+                    completedDays.add(date.toDateString())
+                }
+            })
+
+            if (completedDays.size === 0) return 0
 
             const today = new Date()
             today.setHours(0, 0, 0, 0)
-            const lastDate = new Date(state.lastCompletedDate)
-            lastDate.setHours(0, 0, 0, 0)
 
-            const diffDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24))
+            const todayStr = today.toDateString()
+            const yesterday = new Date(today)
+            yesterday.setDate(yesterday.getDate() - 1)
+            const yesterdayStr = yesterday.toDateString()
 
-            // If last completion was more than 1 day ago, streak is broken
-            if (diffDays > 1) return 0
+            if (!completedDays.has(todayStr) && !completedDays.has(yesterdayStr)) return 0
 
-            // Count consecutive completed juz from the end
             let streak = 0
-            for (let i = state.completedJuz.length - 1; i >= 0; i--) {
-                if (state.completedJuz[i] && state.completionDates[i]) {
+            const checkDate = new Date(today)
+            for (let i = 0; i < 60; i++) {
+                if (completedDays.has(checkDate.toDateString())) {
                     streak++
-                } else {
-                    break
-                }
-            }
-
-            // Simpler approach: count from the first completed sequentially
-            streak = 0
-            for (let i = 0; i < state.completedJuz.length; i++) {
-                if (state.completedJuz[i]) {
-                    streak++
+                    checkDate.setDate(checkDate.getDate() - 1)
                 } else {
                     break
                 }
@@ -75,7 +94,6 @@ export const useTilawahStore = defineStore('tilawah', {
         },
 
         dayOfRamadan(): number {
-            // For demo purposes, use the tilawah progress as the day
             return Math.max(1, this.currentJuzNumber)
         },
 
@@ -84,11 +102,35 @@ export const useTilawahStore = defineStore('tilawah', {
             return state.completionDates.some(d => d && new Date(d).toDateString() === today)
         },
 
+        // Get the most recent reading position (any juz)
+        latestPosition(state): ReadingPosition | null {
+            if (state.readingPositions.length === 0) return null
+            return state.readingPositions[0] // Already sorted by updated_at DESC from backend
+        },
+
+        // Get reading position for a specific juz
+        getPositionForJuz(state) {
+            return (juzNumber: number): ReadingPosition | null => {
+                return state.readingPositions.find(p => p.juz_number === juzNumber) || null
+            }
+        },
+
         getJuzStatus(state) {
             return (juzIndex: number): 'done' | 'today' | 'upcoming' => {
                 if (state.completedJuz[juzIndex]) return 'done'
                 if (juzIndex === state.completedJuz.findIndex(j => !j)) return 'today'
                 return 'upcoming'
+            }
+        },
+
+        // Goal description for display
+        goalDescription(state): string {
+            switch (state.goal.type) {
+                case 'khatam_30': return '1 Juz / Hari'
+                case 'khatam_60': return '½ Juz / Hari'
+                case 'ayat': return `${state.goal.target} Ayat / Hari`
+                case 'custom': return `${state.goal.target} Juz / Hari`
+                default: return 'Bebas'
             }
         },
     },
@@ -106,17 +148,14 @@ export const useTilawahStore = defineStore('tilawah', {
                 })
 
                 if (data.data) {
-                    // Reset local state
                     this.completedJuz = Array(30).fill(false)
                     this.completionDates = Array(30).fill(null)
 
-                    // Update from backend
                     data.data.forEach((p: any) => {
                         const index = p.juz_number - 1
                         if (index >= 0 && index < 30) {
                             this.completedJuz[index] = p.is_read
                             if (p.is_read) {
-                                // Use updated_at as completion date
                                 this.completionDates[index] = p.updated_at
                             }
                         }
@@ -130,6 +169,16 @@ export const useTilawahStore = defineStore('tilawah', {
                         ayah: data.last_read.ayah,
                         surah: data.last_read.surah
                     }
+                }
+
+                // Update reading positions
+                if (data.positions) {
+                    this.readingPositions = data.positions
+                }
+
+                // Update goal
+                if (data.goal) {
+                    this.goal = data.goal
                 }
             } catch (e) {
                 console.error("Failed to fetch progress", e)
@@ -151,7 +200,6 @@ export const useTilawahStore = defineStore('tilawah', {
                 this.completionDates[index] = null
             }
 
-            // Sync with backend
             try {
                 const userStore = useUserStore()
                 if (userStore.token) {
@@ -165,10 +213,20 @@ export const useTilawahStore = defineStore('tilawah', {
                             Authorization: `Bearer ${userStore.token}`
                         }
                     })
+
+                    // Refresh circle assignments (backend auto-completes them)
+                    if (newStatus) {
+                        try {
+                            const { useCircleStore } = await import('./circle')
+                            const circleStore = useCircleStore()
+                            if (circleStore.myCircles.length > 0) {
+                                await circleStore.fetchMyAssignments(circleStore.myCircles[0].id)
+                            }
+                        } catch { /* circle store not available */ }
+                    }
                 }
             } catch (e) {
                 console.error("Failed to sync progress", e)
-                // Revert if failed?
                 this.completedJuz[index] = !newStatus
             }
         },
@@ -181,10 +239,24 @@ export const useTilawahStore = defineStore('tilawah', {
             // Local update
             this.lastRead = { juz, ayah, surah }
 
+            // Also update local positions cache
+            const existingIdx = this.readingPositions.findIndex(p => p.juz_number === juz)
+            const newPos: ReadingPosition = {
+                id: 0,
+                juz_number: juz,
+                ayah,
+                surah,
+                updated_at: new Date().toISOString()
+            }
+            if (existingIdx >= 0) {
+                this.readingPositions[existingIdx] = { ...this.readingPositions[existingIdx], ayah, surah, updated_at: newPos.updated_at }
+            } else {
+                this.readingPositions.unshift(newPos)
+            }
+            // Re-sort: most recent first
+            this.readingPositions.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+
             // Sync with backend
-            // We'll sync immediately for simplicity, component handles debounce logic if needed
-            // But actually debounce is better handled here if we call it frequently? 
-            // Better to just call this action debounced from component.
             try {
                 const userStore = useUserStore()
                 if (userStore.token) {
@@ -205,11 +277,35 @@ export const useTilawahStore = defineStore('tilawah', {
             }
         },
 
+        async setGoal(goalType: string, goalTarget: number = 0) {
+            try {
+                const userStore = useUserStore()
+                if (!userStore.token) return
+
+                await $fetch('/api/tilawah/goal', {
+                    method: 'PUT',
+                    body: {
+                        goal_type: goalType,
+                        goal_target: goalTarget,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${userStore.token}`
+                    }
+                })
+
+                this.goal = { type: goalType, target: goalTarget }
+            } catch (e) {
+                console.error("Failed to set goal", e)
+            }
+        },
+
         resetProgress() {
             this.completedJuz = Array(30).fill(false)
             this.completionDates = Array(30).fill(null)
             this.lastCompletedDate = null
             this.lastRead = null
+            this.readingPositions = []
+            this.goal = { type: 'free', target: 0 }
         },
     },
 

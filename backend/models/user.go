@@ -22,12 +22,17 @@ type User struct {
 	Password  string         `json:"-"` // Don't return password in JSON
 
 	// Relationships
-	JuzProgress []JuzProgress `json:"juz_progress" gorm:"foreignKey:UserID"`
+	JuzProgress      []JuzProgress      `json:"juz_progress" gorm:"foreignKey:UserID"`
+	ReadingPositions []ReadingPosition  `json:"reading_positions,omitempty" gorm:"foreignKey:UserID"`
 
-	// Last Read Position
+	// Last Read Position (global — for quick access)
 	LastReadJuz   int    `json:"last_read_juz"`
 	LastReadAyah  int    `json:"last_read_ayah"`
 	LastReadSurah string `json:"last_read_surah"`
+
+	// Goal settings
+	GoalType   string `json:"goal_type" gorm:"default:free"`   // free, khatam_30, khatam_60, ayat, custom
+	GoalTarget int    `json:"goal_target" gorm:"default:0"`    // target value (e.g. ayat count per day)
 }
 
 func ConnectDatabase() {
@@ -47,7 +52,7 @@ func ConnectDatabase() {
 	}
 
 	// Auto Migrate
-	database.AutoMigrate(&User{}, &JuzProgress{})
+	database.AutoMigrate(&User{}, &JuzProgress{}, &ReadingPosition{}, &Circle{}, &CircleMember{}, &JuzAssignment{}, &CircleStats{}, &MemberXP{})
 
 	DB = database
 }

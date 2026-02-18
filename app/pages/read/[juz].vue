@@ -42,7 +42,8 @@
             :style="{ animationDelay: `${Math.min(index * 0.05, 1)}s` }"
             :data-ayah="ayah.numberInSurah"
             :data-surah="ayah.surah.englishName"
-            :id="`ayah-${ayah.numberInSurah}`"
+            :data-surah-number="ayah.surah.number"
+            :id="`ayah-${ayah.surah.number}-${ayah.numberInSurah}`"
         >
           
           <!-- Surah Header if ayah is start of Surah -->
@@ -134,22 +135,51 @@ async function fetchData() {
   await quranStore.fetchJuz(currentJuz.value)
   
   // Wait for DOM update then setup observer & auto-scroll
-  // Wait for DOM update and animation to settle
   nextTick(() => {
      setTimeout(() => {
         setupObserver()
-        checkAutoScroll()
+        scrollToTarget()
      }, 1000)
   })
 }
 
-function checkAutoScroll() {
-    if (tilawahStore.lastRead && tilawahStore.lastRead.juz === currentJuz.value) {
-        const lastAyah = tilawahStore.lastRead.ayah
-        const el = document.getElementById(`ayah-${lastAyah}`)
+function scrollToTarget() {
+    // Priority 1: Query params (from search, e.g., ?surah=4&ayah=90)
+    const qSurah = route.query.surah ? Number(route.query.surah) : null
+    const qAyah = route.query.ayah ? Number(route.query.ayah) : null
+
+    if (qSurah && qAyah) {
+        const el = document.getElementById(`ayah-${qSurah}-${qAyah}`)
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            info(`Resuming from Surah ${tilawahStore.lastRead.surah}, Ayah ${lastAyah}`)
+            // Highlight the target ayah briefly
+            const card = el.querySelector('.bg-white') as HTMLElement
+            if (card) {
+                card.style.transition = 'box-shadow 0.3s, border-color 0.3s'
+                card.style.boxShadow = '0 0 0 3px rgba(5, 150, 105, 0.3)'
+                card.style.borderColor = '#059669'
+                setTimeout(() => {
+                    card.style.boxShadow = ''
+                    card.style.borderColor = ''
+                }, 3000)
+            }
+            return
+        }
+    }
+
+    // Priority 2: Last read position
+    if (tilawahStore.lastRead && tilawahStore.lastRead.juz === currentJuz.value) {
+        const lastAyah = tilawahStore.lastRead.ayah
+        // Try to find by surah name match too for accuracy
+        const allCards = document.querySelectorAll('.ayah-card')
+        for (const card of allCards) {
+            const cardAyah = Number(card.getAttribute('data-ayah'))
+            const cardSurah = card.getAttribute('data-surah')
+            if (cardAyah === lastAyah && cardSurah === tilawahStore.lastRead.surah) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                info(`Melanjutkan dari ${tilawahStore.lastRead.surah}, Ayah ${lastAyah}`)
+                return
+            }
         }
     }
 }
@@ -170,8 +200,7 @@ function setupObserver() {
             }
         })
     }, {
-    }, {
-        rootMargin: '-20% 0px -20% 0px', // Activate when element is in middle 60% of screen
+        rootMargin: '-20% 0px -20% 0px',
         threshold: 0
     })
 

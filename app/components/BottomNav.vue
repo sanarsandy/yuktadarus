@@ -25,9 +25,19 @@ const route = useRoute()
 
 const navItems = [
   { path: '/home', label: 'Home', icon: resolveComponent('IconHome') },
+  { path: '/quran', label: 'Quran', icon: resolveComponent('IconQuran') },
   { path: '/progress', label: 'Progress', icon: resolveComponent('IconProgress') },
+  { path: '/circles', label: 'Circle', icon: resolveComponent('IconCircle') },
   { path: '/profile', label: 'Profile', icon: resolveComponent('IconProfile') },
 ]
 
-const isActive = (path: string) => route.path === path
+const isActive = (path: string) => {
+  if (path === '/circles') {
+    return route.path === '/circles' || route.path.startsWith('/circle/')
+  }
+  if (path === '/quran') {
+    return route.path === '/quran' || route.path.startsWith('/read/')
+  }
+  return route.path === path
+}
 </script>
