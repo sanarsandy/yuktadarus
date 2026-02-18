@@ -11,12 +11,12 @@ services:
       - /app/node_modules
       - /app/.nuxt
     environment:
-      - NODE_ENV=development
-      - NUXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-      - NUXT_HOST=0.0.0.0
-      - NUXT_PORT=3000
-      - NITRO_HOST=0.0.0.0
-      - NITRO_PORT=3000
+      - NODE_ENV=${NODE_ENV:-development}
+      - NUXT_PUBLIC_GOOGLE_CLIENT_ID=${NUXT_PUBLIC_GOOGLE_CLIENT_ID}
+      - NUXT_HOST=${NUXT_HOST:-0.0.0.0}
+      - NUXT_PORT=${NUXT_PORT:-3000}
+      - NITRO_HOST=${NITRO_HOST:-0.0.0.0}
+      - NITRO_PORT=${NITRO_PORT:-3000}
     depends_on:
       - backend
     restart: unless-stopped
@@ -28,16 +28,16 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=db
-      - DB_USER=odoj_user
-      - DB_PASSWORD=odoj_password
-      - DB_NAME=odoj_db
-      - DB_PORT=5432
-      - JWT_SECRET=supersecretkey
-      - GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-      - GOOGLE_CLIENT_SECRET=your-client-secret
-      - GOOGLE_REDIRECT_URI=http://localhost:3001/auth/callback
-      - PORT=8080
+      - DB_HOST=${DB_HOST:-db}
+      - DB_USER=${DB_USER:-odoj_user}
+      - DB_PASSWORD=${DB_PASSWORD:-odoj_password}
+      - DB_NAME=${DB_NAME:-odoj_db}
+      - DB_PORT=${DB_PORT:-5432}
+      - JWT_SECRET=${JWT_SECRET:-supersecretkey}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-http://localhost:3001/auth/callback}
+      - PORT=${PORT:-8080}
     depends_on:
       - db
     restart: unless-stopped
@@ -46,9 +46,9 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      - POSTGRES_USER=odoj_user
-      - POSTGRES_PASSWORD=odoj_password
-      - POSTGRES_DB=odoj_db
+      - POSTGRES_USER=${DB_USER:-odoj_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-odoj_password}
+      - POSTGRES_DB=${DB_NAME:-odoj_db}
     ports:
       - "5432:5432"
     volumes:
