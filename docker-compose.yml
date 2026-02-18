@@ -12,6 +12,7 @@ services:
       - /app/.nuxt
     environment:
       - NODE_ENV=development
+      - NUXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
       - NUXT_HOST=0.0.0.0
       - NUXT_PORT=3000
       - NITRO_HOST=0.0.0.0
@@ -33,6 +34,9 @@ services:
       - DB_NAME=odoj_db
       - DB_PORT=5432
       - JWT_SECRET=supersecretkey
+      - GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=your-client-secret
+      - GOOGLE_REDIRECT_URI=http://localhost:3001/auth/callback
       - PORT=8080
     depends_on:
       - db

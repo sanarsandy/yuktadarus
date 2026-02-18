@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-cream-100 text-emerald-900 font-sans antialiased;
+    @apply bg-surface-50 text-stone-900 font-sans antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -15,48 +15,56 @@
 }
 
 @layer components {
+
+  /* MacaQuran Modern Card (Clean, White, Slate Border) */
   .card-neu {
-    @apply bg-cream-100 rounded-3xl p-6 transition-all duration-300;
-    box-shadow: 8px 8px 16px #E6E1D6, -8px -8px 16px #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    @apply bg-white rounded-3xl p-6 transition-all duration-300 ease-out border border-surface-200;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .card-neu:hover {
+    @apply border-brand-200 shadow-md;
+    transform: translateY(-2px);
   }
 
   .card-neu-sm {
-    @apply bg-cream-100 rounded-2xl p-4 transition-all duration-300;
-    box-shadow: 4px 4px 8px #E6E1D6, -4px -4px 8px #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    @apply bg-white rounded-2xl p-4 transition-all duration-300 border border-surface-200 shadow-sm;
   }
 
   .card-neu-inset {
-    @apply bg-cream-100 rounded-2xl p-4;
-    box-shadow: inset 4px 4px 8px #E6E1D6, inset -4px -4px 8px #ffffff;
+    @apply bg-surface-100 rounded-2xl p-4 border border-surface-200 shadow-inner;
   }
 
   .card-neu-pressed {
-    @apply bg-cream-100 rounded-2xl;
-    box-shadow: inset 6px 6px 12px #E6E1D6, inset -6px -6px 12px #ffffff;
+    @apply bg-surface-100 rounded-2xl border border-surface-200 shadow-inner;
   }
 
+  /* MacaQuran Primary Button (Teal) */
   .btn-primary {
-    @apply bg-emerald-500 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 ease-out hover:bg-emerald-600 active:scale-95 flex items-center justify-center;
-    box-shadow: 5px 5px 10px #E6E1D6, -5px -5px 10px #ffffff;
+    @apply relative overflow-hidden bg-brand-600 text-white font-semibold py-3.5 px-8 rounded-xl transition-all duration-300 ease-out hover:bg-brand-700 active:scale-95 flex items-center justify-center shadow-lg shadow-brand-500/20;
+  }
+
+  .btn-primary:hover {
+    @apply shadow-xl shadow-brand-500/30;
+    transform: translateY(-1px);
   }
 
   .btn-primary:active {
-    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.15);
+    transform: scale(0.98);
   }
 
+  /* MacaQuran Secondary Button (White/Slate) */
   .btn-secondary {
-    @apply bg-cream-200 text-emerald-700 font-medium py-3 px-6 rounded-2xl transition-all duration-300 ease-out hover:bg-cream-300 active:scale-95 flex items-center justify-center;
-    box-shadow: 4px 4px 8px #E6E1D6, -4px -4px 8px #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    @apply bg-white text-stone-700 font-medium py-3 px-6 rounded-xl transition-all duration-300 ease-out hover:bg-surface-50 active:scale-95 flex items-center justify-center border border-surface-200 shadow-sm;
   }
 
+  /* Glassmorphism Navigation (Clean Glass) */
   .nav-glass {
-    background: rgba(249, 247, 242, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+    /* Slate-200 */
   }
 
   .text-arabic {
@@ -68,7 +76,8 @@
 @layer utilities {
   .text-gradient-emerald {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #2D5A43 0%, #478767 100%);
+    background-image: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
+    /* Teal Gradient */
   }
 }
 
@@ -100,17 +109,73 @@ html {
 }
 
 /* ═══════════ TAJWEED COLORS ═══════════ */
-.tj-hamzah { color: #4a5568; }              /* Hamzah Wasl — gray */
-.tj-lam { color: #0d9488; }                 /* Lam Shamsiyyah — teal */
-.tj-madd-normal { color: #e67e22; }         /* Madd (2 harakat) — orange */
-.tj-madd-permissible { color: #8b5cf6; }    /* Madd permissible — purple */
-.tj-madd-obligatory { color: #dc2626; }     /* Madd laazim — red */
-.tj-silent { color: #9ca3af; }              /* Silent letters — light gray */
-.tj-qalqalah { color: #2563eb; }            /* Qalqalah — blue */
-.tj-ikhfa-noon { color: #16a34a; }          /* Ikhfa (noon) — green */
-.tj-ghunnah { color: #15803d; }             /* Ghunnah — dark green */
-.tj-ikhfa-meem { color: #6366f1; }          /* Ikhfa Shafawi — indigo */
-.tj-ikhfa { color: #22c55e; }               /* Ikhfa — light green */
-.tj-idgham-no-ghunnah { color: #06b6d4; }   /* Idgham tanpa Ghunnah — cyan */
-.tj-idgham-ghunnah { color: #0d9488; }      /* Idgham + Ghunnah — teal */
-.tj-iqlab { color: #ec4899; }               /* Iqlab — pink */
+.tj-hamzah {
+  color: #4a5568;
+}
+
+/* Hamzah Wasl — gray */
+.tj-lam {
+  color: #0d9488;
+}
+
+/* Lam Shamsiyyah — teal */
+.tj-madd-normal {
+  color: #e67e22;
+}
+
+/* Madd (2 harakat) — orange */
+.tj-madd-permissible {
+  color: #8b5cf6;
+}
+
+/* Madd permissible — purple */
+.tj-madd-obligatory {
+  color: #dc2626;
+}
+
+/* Madd laazim — red */
+.tj-silent {
+  color: #9ca3af;
+}
+
+/* Silent letters — light gray */
+.tj-qalqalah {
+  color: #2563eb;
+}
+
+/* Qalqalah — blue */
+.tj-ikhfa-noon {
+  color: #16a34a;
+}
+
+/* Ikhfa (noon) — green */
+.tj-ghunnah {
+  color: #15803d;
+}
+
+/* Ghunnah — dark green */
+.tj-ikhfa-meem {
+  color: #6366f1;
+}
+
+/* Ikhfa Shafawi — indigo */
+.tj-ikhfa {
+  color: #22c55e;
+}
+
+/* Ikhfa — light green */
+.tj-idgham-no-ghunnah {
+  color: #06b6d4;
+}
+
+/* Idgham tanpa Ghunnah — cyan */
+.tj-idgham-ghunnah {
+  color: #0d9488;
+}
+
+/* Idgham + Ghunnah — teal */
+.tj-iqlab {
+  color: #ec4899;
+}
+
+/* Iqlab — pink */

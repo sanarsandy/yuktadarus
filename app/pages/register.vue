@@ -143,8 +143,16 @@ async function handleRegister() {
   }
 }
 
+// Removed useGoogleAuth import
+// import { useGoogleAuth } from '~/composables/useGoogleAuth'
+
 async function handleGoogleSignup() {
-  await userStore.loginWithGoogle()
-  router.push('/home')
+  try {
+    const { url } = await $fetch<{ url: string }>('/api/auth/google/url')
+    window.location.href = url
+  } catch (e: any) {
+    const { error } = useToast()
+    error(e.message || 'Google signup failed')
+  }
 }
 </script>

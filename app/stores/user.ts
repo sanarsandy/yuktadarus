@@ -85,12 +85,33 @@ export const useUserStore = defineStore('user', {
                 this.isLoading = false
             }
         },
-        async loginWithGoogle() {
-            // Mock Google login for now
-            this.name = 'Google User'
-            this.email = 'user@gmail.com'
-            this.isLoggedIn = true
-            this.isOnboarded = true
+        async loginWithGoogle(code: string) {
+            console.log('UserStore: loginWithGoogle called with code length:', code.length)
+            this.isLoading = true
+            this.error = null
+            try {
+                console.log('UserStore: Sending code to /api/auth/google/callback')
+                const response = await $fetch<{ token: string, user: { name: string, email: string } }>('/api/auth/google/callback', {
+                    method: 'POST',
+                    body: { code }
+                })
+                console.log('UserStore: Received response:', response)
+
+                this.token = response.token
+                this.name = response.user.name
+                this.email = response.user.email
+                this.isLoggedIn = true
+                this.isOnboarded = true
+
+                const tilawahStore = useTilawahStore()
+                await tilawahStore.fetchProgress()
+            } catch (e: any) {
+                console.error('UserStore: Login failed:', e)
+                this.error = e.data?.error || 'Google login failed'
+                throw e
+            } finally {
+                this.isLoading = false
+            }
         },
         logout() {
             this.isLoggedIn = false

@@ -36,6 +36,8 @@ func main() {
 		{
 			auth.POST("/register", controllers.Register)
 			auth.POST("/login", controllers.Login)
+			auth.GET("/google/url", controllers.GoogleLoginURL)
+			auth.POST("/google/callback", controllers.GoogleCallback)
 		}
 
 		// Tilawah Routes (Protected)

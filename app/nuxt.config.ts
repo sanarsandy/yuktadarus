@@ -4,6 +4,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
 
+  runtimeConfig: {
+    public: {
+      googleClientId: '',
+    },
+  },
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
@@ -13,6 +19,9 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'MacaQuran',
+      script: [
+        { src: 'https://accounts.google.com/gsi/client', async: true, defer: true }
+      ],
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },

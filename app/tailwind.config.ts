@@ -12,50 +12,83 @@ export default <Config>{
     theme: {
         extend: {
             colors: {
+                // MacaQuran v2 "Modern Fresh"
+                brand: {
+                    50: '#F0FDFA',
+                    100: '#CCFBF1',
+                    200: '#99F6E4',
+                    300: '#5EEAD4',
+                    400: '#2DD4BF',
+                    500: '#14B8A6',
+                    600: '#0D9488', // Primary Brand Color (Teal)
+                    700: '#0F766E',
+                    800: '#115E59',
+                    900: '#134E4A',
+                },
+                accent: {
+                    DEFAULT: '#F97316', // Coral/Orange for CTAs
+                    50: '#FFF7ED',
+                    100: '#FFEDD5',
+                    200: '#FED7AA',
+                    300: '#FDBA74',
+                    400: '#FB923C',
+                    500: '#F97316',
+                    600: '#EA580C',
+                    700: '#C2410C',
+                },
+                // Functional Colors
+                surface: {
+                    50: '#F8FAFC', // Slate-50
+                    100: '#F1F5F9', // Slate-100
+                    200: '#E2E8F0',
+                    300: '#CBD5E1',
+                    400: '#94A3B8',
+                },
+                // Functional Grays (Charcoal for text)
+                stone: {
+                    50: '#FAFAF9',
+                    100: '#F5F5F4',
+                    200: '#E7E5E4',
+                    300: '#D6D3D1',
+                    400: '#A8A29E',
+                    500: '#78716C',
+                    600: '#57534E',
+                    700: '#44403C',
+                    800: '#1E293B', // Slate-800
+                    900: '#0F172A', // Slate-900
+                },
+                // Keep minimal gold for Quranic context
+                gold: {
+                    DEFAULT: '#EAB308',
+                    500: '#EAB308',
+                },
+                // Aliases for backward compatibility during refactor
                 cream: {
-                    50: '#FDFCF9',
-                    100: '#F9F7F2',
-                    200: '#F3EFE7',
-                    300: '#E8E4DD',
-                    400: '#D4CFC5',
+                    50: '#FFFFFF', // Map to white
+                    100: '#F8FAFC', // Map to slate-50
+                    200: '#E2E8F0',
+                    300: '#CBD5E1',
                 },
                 emerald: {
-                    DEFAULT: '#2D5A43',
-                    50: '#E8F0EC',
-                    100: '#D1E1D9',
-                    200: '#A3C3B3',
-                    300: '#75A58D',
-                    400: '#478767',
-                    500: '#2D5A43',
-                    600: '#244836',
-                    700: '#1B3628',
-                    800: '#12241B',
-                    900: '#09120D',
-                },
-                gold: {
-                    DEFAULT: '#C4A962',
-                    50: '#FBF7ED',
-                    100: '#F2EACD',
-                    200: '#E5D59B',
-                    300: '#D8C069',
-                    400: '#C4A962',
-                    500: '#A8904A',
-                    600: '#8C7638',
-                    700: '#6F5D28',
-                },
+                    ...require('tailwindcss/colors').teal,
+                    DEFAULT: '#0D9488',
+                }
             },
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
+                sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
                 arabic: ['Amiri', 'serif'],
             },
             boxShadow: {
-                'neu': '8px 8px 16px #E6E1D6, -8px -8px 16px #ffffff',
-                'neu-sm': '4px 4px 8px #E6E1D6, -4px -4px 8px #ffffff',
-                'neu-lg': '12px 12px 24px #E6E1D6, -12px -12px 24px #ffffff',
-                'neu-inset': 'inset 4px 4px 8px #E6E1D6, inset -4px -4px 8px #ffffff',
-                'neu-pressed': 'inset 6px 6px 12px #E6E1D6, inset -6px -6px 12px #ffffff',
-                'neu-btn': '5px 5px 10px #E6E1D6, -5px -5px 10px #ffffff',
-                'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
+                'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                'DEFAULT': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                'glow': '0 0 15px rgba(13, 148, 136, 0.3)', // Teal glow
+                // Legacy mappings
+                'neu': '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06)',
+                'neu-sm': '0 1px 2px 0 rgba(0,0,0,0.05)',
             },
             borderRadius: {
                 '2xl': '1rem',

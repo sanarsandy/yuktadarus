@@ -123,14 +123,19 @@ async function handleLogin() {
   }
 }
 
+// Removed useGoogleAuth import
+// import { useGoogleAuth } from '~/composables/useGoogleAuth'
+
 async function handleGoogleLogin() {
   isLoading.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Fake delay
-    await userStore.loginWithGoogle()
-    router.push('/home')
-  } finally {
+    const { url } = await $fetch<{ url: string }>('/api/auth/google/url')
+    window.location.href = url
+  } catch (e: any) {
+    const { error } = useToast()
+    error(e.message || 'Google login failed') // Display specific error if available
     isLoading.value = false
   }
+  // Note: isLoading remains true during redirect, which is fine
 }
 </script>

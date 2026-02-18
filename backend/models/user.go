@@ -19,7 +19,9 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 	Name      string         `json:"name"`
 	Email     string         `json:"email" gorm:"unique"`
-	Password  string         `json:"-"` // Don't return password in JSON
+	Password     string         `json:"-"` // Don't return password in JSON
+	AuthProvider string         `json:"auth_provider" gorm:"default:local"` // local, google
+	GoogleID     string         `json:"-" gorm:"index"`                     // Google sub ID
 
 	// Relationships
 	JuzProgress      []JuzProgress      `json:"juz_progress" gorm:"foreignKey:UserID"`
