@@ -1,0 +1,71 @@
+services:
+  # Database Service (Same as Dev)
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER:-odoj_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-odoj_password}
+      - POSTGRES_DB=${DB_NAME:-odoj_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Database Migration Service (Runs once on startup)
+  init-db:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: ["./migrate"]
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER:-odoj_user}
+      - DB_PASSWORD=${DB_PASSWORD:-odoj_password}
+      - DB_NAME=${DB_NAME:-odoj_db}
+      - DB_PORT=${DB_PORT:-5432}
+    depends_on:
+      db:
+        condition: service_started
+
+  # Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER:-odoj_user}
+      - DB_PASSWORD=${DB_PASSWORD:-odoj_password}
+      - DB_NAME=${DB_NAME:-odoj_db}
+      - DB_PORT=${DB_PORT:-5432}
+      - JWT_SECRET=${JWT_SECRET:-supersecretkey}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - PORT=8080
+    depends_on:
+      init-db:
+        condition: service_completed_successfully
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - "${NUXT_PORT:-3000}:3000"
+    environment:
+      - NUXT_PUBLIC_GOOGLE_CLIENT_ID=${NUXT_PUBLIC_GOOGLE_CLIENT_ID}
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3000
+      - NUXT_API_URL=http://backend:8080
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
